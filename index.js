@@ -44,6 +44,11 @@ const upload = multer({
   },
 });
 
+// 🔥 uploads folder auto create
+if (!fs.existsSync("uploads")) {
+  fs.mkdirSync("uploads");
+}
+
 // 📤 Upload API
 app.post("/upload", upload.single("file"), async (req, res) => {
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
