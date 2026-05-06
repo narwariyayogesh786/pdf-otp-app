@@ -81,7 +81,7 @@ async function uploadFile() {
   const formData = new FormData();
   formData.append("file", file);
 
-  const res = await fetch("http://localhost:3000/upload", {
+  const res = await fetch("https://pdf-otp-app.onrender.com/upload", {
     method: "POST",
     body: formData
   });
@@ -95,7 +95,7 @@ async function uploadFile() {
 async function verifyOTP() {
   const otp = document.getElementById("otpInput").value;
 
-  const res = await fetch("http://localhost:3000/verify", {
+  const res = await fetch("https://pdf-otp-app.onrender.com/verify", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ otp })
@@ -108,7 +108,7 @@ async function verifyOTP() {
 }
 
 function downloadFile() {
-  window.location.href = "http://localhost:3000/download/" + filename;
+  window.location.href = "https://pdf-otp-app.onrender.com/download/" + filename;
 }
 </script>
 
