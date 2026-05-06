@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 // MongoDB connect
-mongoose.connect("mongodb://onlinework00092:Onlinework123@ac-cnn5ep0-shard-00-00.bzujonu.mongodb.net:27017,ac-cnn5ep0-shard-00-01.bzujonu.mongodb.net:27017,ac-cnn5ep0-shard-00-02.bzujonu.mongodb.net:27017/?ssl=true&replicaSet=atlas-xupjqs-shard-0&authSource=admin&appName=YOYOSERVER")
+mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB Connected"))
   .catch(err => console.log(err));
 
