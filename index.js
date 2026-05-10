@@ -4,7 +4,6 @@ const mongoose = require("mongoose");
 const multer = require("multer");
 const cors = require("cors");
 const { v4: uuidv4 } = require("uuid");
-const path = require("path");
 
 const app = express();
 app.use(cors());
@@ -51,7 +50,7 @@ if (!fs.existsSync("uploads")) {
 }
 
 // 📤 Upload API
-app.post("/upload", upload.single("pdf"), async (req, res) => {
+app.post("/upload", upload.single("file"), async (req, res) => {
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
 	
   setTimeout(() => {
@@ -64,26 +63,16 @@ app.post("/upload", upload.single("pdf"), async (req, res) => {
     expires: new Date(Date.now() + 5 * 60 * 1000), // 5 min
   });
 
-  const fileId = req.file.filename;
-	
-  res.json({
-    otp: otp,
-    fileId: fileId,
-    expiresIn: 300
-  });
-
+  res.json({ otp });
 });
 
 // 🔑 Verify OTP
 app.post("/verify", async (req, res) => {
   const { otp } = req.body;
 
-   const file = files[otp];
+  const data = await File.findOne({ otp });
 
-  if (!file) {
-    return res.json({
-      error: "Invalid OTP"
-    });
+  if (!data) return res.status(400).json({ error: "Invalid OTP" });
 
   if (new Date() > data.expires) {
     await File.deleteOne({ otp });
@@ -92,20 +81,12 @@ app.post("/verify", async (req, res) => {
 
   await File.deleteOne({ otp }); // one-time use
 
-    res.json({
-    fileId: file.filename,
-    originalName: file.originalname,
-    fileSize: file.size
-  });
-
-
+  res.json({ filename: data.filename });
 });
 
 // 📥 Download
-app.get("/download/:id", (req, res) => {
- const id = req.params.id;
-
- const filePath = path.join(__dirname, "uploads", id);
+app.get("/download/:name", (req, res) => {
+  const filePath = __dirname + "/uploads/" + req.params.name;
 
   res.download(filePath, (err) => {
     if (err) {
@@ -119,10 +100,6 @@ app.get("/download/:id", (req, res) => {
     }
   });
 });
-
-const cors = require("cors");
-
-app.use(cors());
 
 // Server start
 const PORT = process.env.PORT || 3000;
